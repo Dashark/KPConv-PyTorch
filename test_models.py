@@ -37,6 +37,7 @@ from torch.utils.data import DataLoader
 from utils.config import Config
 from utils.tester import ModelTester
 from models.architectures import KPCNN, KPFCNN
+from datasets.SsePCD import *
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -95,10 +96,10 @@ if __name__ == '__main__':
     #       > 'last_XXX': Automatically retrieve the last trained model on dataset XXX
     #       > '(old_)results/Log_YYYY-MM-DD_HH-MM-SS': Directly provide the path of a trained model
 
-    chosen_log = 'results/Log_2020-04-05_19-19-20'  # => ModelNet40
+    chosen_log = 'results/Log_2021-07-22_07-46-26'  # => ModelNet40
 
     # Choose the index of the checkpoint to load OR None if you want to load the current checkpoint
-    chkp_idx = None
+    chkp_idx = 2
 
     # Choose to test on validation or test split
     on_val = True
@@ -130,7 +131,7 @@ if __name__ == '__main__':
     else:
         chosen_chkp = np.sort(chkps)[chkp_idx]
     chosen_chkp = os.path.join(chosen_log, 'checkpoints', chosen_chkp)
-
+    print(chosen_chkp)
     # Initialize configuration class
     config = Config()
     config.load(chosen_log)
@@ -174,6 +175,10 @@ if __name__ == '__main__':
         test_dataset = SemanticKittiDataset(config, set=set, balance_classes=False)
         test_sampler = SemanticKittiSampler(test_dataset)
         collate_fn = SemanticKittiCollate
+    elif config.dataset == 'SsePCD':
+        test_dataset = SsePCDDataset(config, set='validation')
+        test_sampler = SsePCDSampler(test_dataset)
+        collate_fn = SsePCDCollate
     else:
         raise ValueError('Unsupported dataset : ' + config.dataset)
 
@@ -190,6 +195,7 @@ if __name__ == '__main__':
 
     print('\nModel Preparation')
     print('*****************')
+    start_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
     # Define network model
     t1 = time.time()
@@ -205,14 +211,23 @@ if __name__ == '__main__':
     print('Done in {:.1f}s\n'.format(time.time() - t1))
 
     print('\nStart test')
+    print(config.saving)
+    print(config.saving_path)
     print('**********\n')
+    # Confusion on sub clouds
+    # 37.56 | 76.42 0.00 47.56 26.26
 
     # Training
     if config.dataset_task == 'classification':
         tester.classification_test(net, test_loader, config)
     elif config.dataset_task == 'cloud_segmentation':
-        tester.cloud_segmentation_test(net, test_loader, config)
+        tester.cloud_segmentation_test(net, test_loader, config, num_votes=1)
     elif config.dataset_task == 'slam_segmentation':
         tester.slam_segmentation_test(net, test_loader, config)
     else:
         raise ValueError('Unsupported dataset_task for testing: ' + config.dataset_task)
+
+    end_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+    print('test model finished:{}'.format(chosen_log))
+    print('start:{} end:{}'.format(start_time, end_time))
