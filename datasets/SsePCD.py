@@ -117,10 +117,10 @@ class SsePCDDataset(PointCloudDataset):
         for i, f in enumerate(self.cloud_names):
             if self.set == 'training':
                 if self.all_splits[i] != self.validation_split:
-                    self.files += [join(ply_path, f + '.ply')]
+                    self.files += [join(self.ply_path, f + '.ply')]
             elif self.set in ['validation', 'test', 'ERF']:
                 if self.all_splits[i] == self.validation_split:
-                    self.files += [join(ply_path, f + '.ply')]
+                    self.files += [join(self.ply_path, f + '.ply')]
             else:
                 raise ValueError('Unknown set for SsePCD data: ', self.set)
 
