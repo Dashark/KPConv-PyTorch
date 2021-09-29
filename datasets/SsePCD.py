@@ -215,9 +215,13 @@ class SsePCDDataset(PointCloudDataset):
         """
 
         if self.use_potentials:
-            return self.potential_item(batch_i)
+            ret = self.potential_item(batch_i)
+            print("__getitem__ of potentials {:.1f}".format(ret))
+            return ret
         else:
-            return self.random_item(batch_i)
+            ret = self.random_item(batch_i)
+            print("__getitem__ of random {:.1f}".format(ret))
+            return ret
 
     def potential_item(self, batch_i, debug_workers=False):
 
@@ -1163,7 +1167,7 @@ class SsePCDSampler(Sampler):
             target_b = self.dataset.config.batch_num
 
             # Expected batch size order of magnitude
-            expected_N = 100000
+            expected_N = 1000
 
             # Calibration parameters. Higher means faster but can also become unstable
             # Reduce Kp and Kd if your GP Uis small as the total number of points per batch will be smaller 
