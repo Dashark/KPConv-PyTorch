@@ -256,8 +256,8 @@ if __name__ == '__main__':
                              drop_last=True)
 
     # Calibrate samplers
-    training_sampler.calibration(training_loader, verbose=True)
-    test_sampler.calibration(test_loader, verbose=True)
+    training_sampler.calibration(training_loader, verbose=True, force_redo=True)
+    test_sampler.calibration(test_loader, verbose=True, force_redo=True)
 
     # Optional debug functions
     # debug_timing(training_dataset, training_loader)

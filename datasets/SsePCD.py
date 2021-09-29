@@ -216,11 +216,11 @@ class SsePCDDataset(PointCloudDataset):
 
         if self.use_potentials:
             ret = self.potential_item(batch_i)
-            print("__getitem__ of potentials {:.1f}".format(ret))
+            print("__getitem__ of potentials {:.1f}".format(ret.size()))
             return ret
         else:
             ret = self.random_item(batch_i)
-            print("__getitem__ of random {:.1f}".format(ret))
+            print("__getitem__ of random {:.1f}".format(ret.size()))
             return ret
 
     def potential_item(self, batch_i, debug_workers=False):
