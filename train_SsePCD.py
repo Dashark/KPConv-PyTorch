@@ -229,8 +229,8 @@ if __name__ == '__main__':
         config.saving_path = sys.argv[1]
 
     # Initialize datasets
-    training_dataset = SsePCDDataset(config, set='training', use_potentials=False)
-    test_dataset = SsePCDDataset(config, set='validation', use_potentials=False)
+    training_dataset = SsePCDDataset(config, set='training', use_potentials=True)
+    test_dataset = SsePCDDataset(config, set='validation', use_potentials=True)
 
     # print('exit #1')
     # sys.exit()
