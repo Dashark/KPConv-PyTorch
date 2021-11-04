@@ -44,7 +44,7 @@ class SsePCDConfig(Config):
     dataset_task = ''
 
     # Number of CPU threads for the input pipeline
-    input_threads = 0  # 10
+    input_threads = 10
 
     #########################
     # Architecture definition
