@@ -45,10 +45,10 @@ class SsePCDDataset(PointCloudDataset):
         ############
 
         # Dict from labels to names, Used by prepare_SsePCD_ply()
-        self.label_to_names = {
-                               0: 'Class 1',
-                               1: 'Class 2',
-                               2: 'Class 3'}
+        self.label_to_names = {0: 'VOID',
+                               1: 'Class 1',
+                               2: 'Class 2',
+                               3: 'Class 3'}
 
         # Initialize a bunch of variables concerning class labels
         self.init_labels()
@@ -296,13 +296,16 @@ class SsePCDDataset(PointCloudDataset):
                 pot_inds, dists = self.pot_trees[cloud_ind].query_radius(center_point,
                                                                          r=self.config.in_radius,
                                                                          return_distance=True)
-
+                print(dists)
                 d2s = np.square(dists[0])
                 pot_inds = pot_inds[0]
 
                 # Update potentials (Tukey weights)
                 if self.set != 'ERF':
+                    print(self.config.in_radius)
                     tukeys = np.square(1 - d2s / np.square(self.config.in_radius))
+                    print(tukeys)
+                    # 这儿不是论文里的 1/3 ???
                     tukeys[d2s > np.square(self.config.in_radius)] = 0
                     self.potentials[cloud_ind][pot_inds] += tukeys
                     min_ind = torch.argmin(self.potentials[cloud_ind])
@@ -749,6 +752,7 @@ class SsePCDDataset(PointCloudDataset):
                 labels = data['class']
 
                 # Subsample cloud
+                print('\n How many points {:.3f}'.format(points.size()))
                 sub_points, sub_colors, sub_labels = grid_subsampling(points,
                                                                       features=colors,
                                                                       labels=labels,
