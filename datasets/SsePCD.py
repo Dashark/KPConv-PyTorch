@@ -630,7 +630,7 @@ class SsePCDDataset(PointCloudDataset):
                           ['x', 'y', 'z', 'red', 'green', 'blue', 'class'])
 
         self.all_splits = [i for i in range(len(self.cloud_names))]
-        self.validation_split = [i for i in range(len(self.cloud_names)) if i % 10 == 0]
+        self.validation_split = [0] #[i for i in range(len(self.cloud_names)) if i % 10 == 0]
         print('Done in {:.1f}s'.format(time.time() - t0))
         return
 
