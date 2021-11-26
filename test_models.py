@@ -96,13 +96,13 @@ if __name__ == '__main__':
     #       > 'last_XXX': Automatically retrieve the last trained model on dataset XXX
     #       > '(old_)results/Log_YYYY-MM-DD_HH-MM-SS': Directly provide the path of a trained model
 
-    chosen_log = 'results/Log_2021-07-22_07-46-26'  # => ModelNet40
+    chosen_log = 'results/Log_2021-11-09_02-22-55' # => ModelNet40
 
     # Choose the index of the checkpoint to load OR None if you want to load the current checkpoint
-    chkp_idx = 2
+    chkp_idx = None
 
     # Choose to test on validation or test split
-    on_val = True
+    on_val = False
 
     # Deal with 'last_XXXXXX' choices
     chosen_log = model_choice(chosen_log)
@@ -176,7 +176,7 @@ if __name__ == '__main__':
         test_sampler = SemanticKittiSampler(test_dataset)
         collate_fn = SemanticKittiCollate
     elif config.dataset == 'SsePCD':
-        test_dataset = SsePCDDataset(config, set='validation')
+        test_dataset = SsePCDDataset(config, set='test')
         test_sampler = SsePCDSampler(test_dataset)
         collate_fn = SsePCDCollate
     else:
@@ -184,7 +184,7 @@ if __name__ == '__main__':
 
     # Data loader
     test_loader = DataLoader(test_dataset,
-                             batch_size=1,
+                             batch_size=9,
                              sampler=test_sampler,
                              collate_fn=collate_fn,
                              num_workers=config.input_threads,
