@@ -793,7 +793,7 @@ class SsePCDDataset(PointCloudDataset):
             # Restart timer
             t0 = time.time()
 
-            pot_dl = self.config.in_radius / 100
+            pot_dl = self.config.in_radius / 10
             cloud_ind = 0
 
             for i, file_path in enumerate(self.files):
