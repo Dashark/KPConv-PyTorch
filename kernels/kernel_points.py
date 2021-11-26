@@ -433,10 +433,10 @@ def load_kernels(radius, num_kpoints, dimension, fixed, lloyd=False):
             # Create kernels
             kernel_points, grad_norms = kernel_point_optimization_debug(1.0,
                                                                         num_kpoints,
-                                                                        num_kernels=100,
+                                                                        num_kernels=1000,
                                                                         dimension=dimension,
                                                                         fixed=fixed,
-                                                                        verbose=0)
+                                                                        verbose=1)
 
             # Find best candidate
             best_k = np.argmin(grad_norms[-1, :])
