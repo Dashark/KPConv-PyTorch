@@ -116,20 +116,20 @@ class SsePCDDataset(PointCloudDataset):
         self.files = []
         for i, f in enumerate(self.cloud_names):
             if self.set == 'training':
-                if self.all_splits[i] != self.validation_split:
+                if self.all_splits[i] not in self.validation_split:
                     self.files += [join(self.ply_path, f + '.ply')]
             elif self.set in ['validation', 'test', 'ERF']:
-                if self.all_splits[i] == self.validation_split:
+                if self.all_splits[i] in self.validation_split:
                     self.files += [join(self.ply_path, f + '.ply')]
             else:
                 raise ValueError('Unknown set for SsePCD data: ', self.set)
 
         if self.set == 'training':
             self.cloud_names = [f for i, f in enumerate(self.cloud_names)
-                                if self.all_splits[i] != self.validation_split]
+                                if self.all_splits[i] not in self.validation_split]
         elif self.set in ['validation', 'test', 'ERF']:
             self.cloud_names = [f for i, f in enumerate(self.cloud_names)
-                                if self.all_splits[i] == self.validation_split]
+                                if self.all_splits[i] in self.validation_split]
 
         print('self.cloud_names =', self.cloud_names)
 
@@ -168,7 +168,6 @@ class SsePCDDataset(PointCloudDataset):
                 min_ind = int(torch.argmin(self.potentials[-1]))
                 self.argmin_potentials += [min_ind]
                 self.min_potentials += [float(self.potentials[-1][min_ind])]
-
             # Share potential memory
             self.argmin_potentials = torch.from_numpy(np.array(self.argmin_potentials, dtype=np.int64))
             self.min_potentials = torch.from_numpy(np.array(self.min_potentials, dtype=np.float64))
@@ -216,11 +215,11 @@ class SsePCDDataset(PointCloudDataset):
 
         if self.use_potentials:
             ret = self.potential_item(batch_i)
-            print("__getitem__ of potentials {:.1f}".format(ret.size()))
+            # print("__getitem__ of potentials {:.1f}".format(len(ret)))
             return ret
         else:
             ret = self.random_item(batch_i)
-            print("__getitem__ of random {:.1f}".format(ret.size()))
+            # print("__getitem__ of random {:.1f}".format(len(ret)))
             return ret
 
     def potential_item(self, batch_i, debug_workers=False):
@@ -279,6 +278,7 @@ class SsePCDDataset(PointCloudDataset):
                     self.worker_waiting[wid] = 1
 
                 # Get potential minimum
+                # print('\n min potentials shape', self.min_potentials)
                 cloud_ind = int(torch.argmin(self.min_potentials))
                 point_ind = int(self.argmin_potentials[cloud_ind])
 
@@ -296,16 +296,13 @@ class SsePCDDataset(PointCloudDataset):
                 pot_inds, dists = self.pot_trees[cloud_ind].query_radius(center_point,
                                                                          r=self.config.in_radius,
                                                                          return_distance=True)
-                print(dists)
+
                 d2s = np.square(dists[0])
                 pot_inds = pot_inds[0]
 
                 # Update potentials (Tukey weights)
                 if self.set != 'ERF':
-                    print(self.config.in_radius)
                     tukeys = np.square(1 - d2s / np.square(self.config.in_radius))
-                    print(tukeys)
-                    # 这儿不是论文里的 1/3 ???
                     tukeys[d2s > np.square(self.config.in_radius)] = 0
                     self.potentials[cloud_ind][pot_inds] += tukeys
                     min_ind = torch.argmin(self.potentials[cloud_ind])
@@ -334,6 +331,7 @@ class SsePCDDataset(PointCloudDataset):
                 input_labels = np.zeros(input_points.shape[0])
             else:
                 input_labels = self.input_labels[cloud_ind][input_inds]
+                # print('\n how many labels {:d}'.format(len(input_labels)))
                 input_labels = np.array([self.label_to_idx[l] for l in input_labels])
 
             t += [time.time()]
@@ -622,7 +620,7 @@ class SsePCDDataset(PointCloudDataset):
 
                 pcd_cloud_file = join(self.pcd_path, file)
                 cloud_points, cloud_colors, cloud_classes = self.pcd_file_parse(pcd_cloud_file)
-                cloud_points = cloud_points * 10
+                # cloud_points = cloud_points * 10
 
                 # Save as ply
                 write_ply(ply_cloud_file,
@@ -752,12 +750,12 @@ class SsePCDDataset(PointCloudDataset):
                 labels = data['class']
 
                 # Subsample cloud
-                print('\n How many points {:.3f}'.format(points.size()))
                 sub_points, sub_colors, sub_labels = grid_subsampling(points,
                                                                       features=colors,
                                                                       labels=labels,
                                                                       sampleDl=dl)
 
+                print('sub points: ', len(sub_points), len(points))
                 # Rescale float color and squeeze label
                 sub_colors = sub_colors / 255
                 sub_labels = np.squeeze(sub_labels)
@@ -795,10 +793,11 @@ class SsePCDDataset(PointCloudDataset):
             # Restart timer
             t0 = time.time()
 
-            pot_dl = self.config.in_radius / 10
+            pot_dl = self.config.in_radius / 100
             cloud_ind = 0
 
             for i, file_path in enumerate(self.files):
+                print('\nPreparing potentials')
 
                 # Get cloud name
                 cloud_name = self.cloud_names[i]
@@ -1171,7 +1170,7 @@ class SsePCDSampler(Sampler):
             target_b = self.dataset.config.batch_num
 
             # Expected batch size order of magnitude
-            expected_N = 1000
+            expected_N = 10000
 
             # Calibration parameters. Higher means faster but can also become unstable
             # Reduce Kp and Kd if your GP Uis small as the total number of points per batch will be smaller 
