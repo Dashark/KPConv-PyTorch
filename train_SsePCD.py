@@ -41,10 +41,10 @@ class SsePCDConfig(Config):
     num_classes = None
 
     # Type of task performed on this dataset (also overwritten)
-    dataset_task = ''
+    dataset_task = 'cloud_segmentation'
 
     # Number of CPU threads for the input pipeline
-    input_threads = 10
+    input_threads = 8
 
     #########################
     # Architecture definition
@@ -79,13 +79,13 @@ class SsePCDConfig(Config):
     ###################
 
     # Radius of the input sphere
-    in_radius = 0.5
+    in_radius = 2.0
 
     # Number of kernel points
     num_kernel_points = 15
 
     # Size of the first subsampling grid in meter
-    first_subsampling_dl = 0.01
+    first_subsampling_dl = 0.05
 
     # Radius of convolution in "number grid cell". (2.5 is the standard value)
     conv_radius = 2.5
@@ -135,7 +135,7 @@ class SsePCDConfig(Config):
     grad_clip_norm = 100.0
 
     # Number of batch
-    batch_num = 3  # 6
+    batch_num = 9
 
     # Number of steps per epochs
     epoch_steps = 500
@@ -256,8 +256,8 @@ if __name__ == '__main__':
                              drop_last=True)
 
     # Calibrate samplers
-    training_sampler.calibration(training_loader, verbose=True, force_redo=True)
-    test_sampler.calibration(test_loader, verbose=True, force_redo=True)
+    training_sampler.calibration(training_loader, verbose=True)
+    test_sampler.calibration(test_loader, verbose=True)
 
     # Optional debug functions
     # debug_timing(training_dataset, training_loader)
@@ -266,6 +266,7 @@ if __name__ == '__main__':
 
     print('\nModel Preparation')
     print('*****************')
+    # exit()
 
     # Define network model
     t1 = time.time()
