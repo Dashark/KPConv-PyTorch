@@ -35,7 +35,7 @@ class SsePCDConfig(Config):
     ####################
 
     # Dataset name
-    dataset = 'SsePCD'
+    dataset = 'Benewake'
 
     # Number of classes in the dataset (This value is overwritten by dataset class when Initializating dataset).
     num_classes = None
@@ -85,7 +85,7 @@ class SsePCDConfig(Config):
     num_kernel_points = 15
 
     # Size of the first subsampling grid in meter
-    first_subsampling_dl = 0.05
+    first_subsampling_dl = 0.01
 
     # Radius of convolution in "number grid cell". (2.5 is the standard value)
     conv_radius = 2.5
@@ -246,14 +246,14 @@ if __name__ == '__main__':
                                  collate_fn=SsePCDCollate,
                                  num_workers=config.input_threads,
                                  pin_memory=True,
-                                 drop_last=True)
+                                 drop_last=False)
     test_loader = DataLoader(test_dataset,
                              batch_size=1,
                              sampler=test_sampler,
                              collate_fn=SsePCDCollate,
                              num_workers=config.input_threads,
                              pin_memory=True,
-                             drop_last=True)
+                             drop_last=False)
 
     # Calibrate samplers
     training_sampler.calibration(training_loader, verbose=True)

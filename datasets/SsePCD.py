@@ -46,9 +46,9 @@ class SsePCDDataset(PointCloudDataset):
 
         # Dict from labels to names, Used by prepare_SsePCD_ply()
         self.label_to_names = {0: 'VOID',
-                               1: 'Class 1',
-                               2: 'Class 2',
-                               3: 'Class 3'}
+                               1: 'box',
+                               2: 'yellow_box',
+                               3: 'signal'}
 
         # Initialize a bunch of variables concerning class labels
         self.init_labels()
@@ -73,7 +73,7 @@ class SsePCDDataset(PointCloudDataset):
         self.use_potentials = use_potentials
 
         # Dataset folder
-        self.path = '../Data/SsePCD3/'
+        self.path = '../Data/tunnel/'
 
         # Path of the training files
         self.train_path = 'original_ply'
@@ -734,7 +734,7 @@ class SsePCDDataset(PointCloudDataset):
                 # read ply with data
                 data = read_ply(sub_ply_file)
                 sub_colors = np.vstack((data['red'], data['green'], data['blue'])).T
-                sub_labels = data['class']
+                sub_labels = data['label']
 
                 # Read pkl with search tree
                 with open(KDTree_file, 'rb') as f:
@@ -747,7 +747,7 @@ class SsePCDDataset(PointCloudDataset):
                 data = read_ply(file_path)
                 points = np.vstack((data['x'], data['y'], data['z'])).T
                 colors = np.vstack((data['red'], data['green'], data['blue'])).T
-                labels = data['class']
+                labels = data['label']
 
                 # Subsample cloud
                 sub_points, sub_colors, sub_labels = grid_subsampling(points,
@@ -772,7 +772,7 @@ class SsePCDDataset(PointCloudDataset):
                 # Save ply
                 write_ply(sub_ply_file,
                           [sub_points, sub_colors, sub_labels],
-                          ['x', 'y', 'z', 'red', 'green', 'blue', 'class'])
+                          ['x', 'y', 'z', 'red', 'green', 'blue', 'label'])
 
             # Fill data containers
             self.input_trees += [search_tree]
