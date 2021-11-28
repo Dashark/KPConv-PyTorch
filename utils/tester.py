@@ -183,8 +183,8 @@ class ModelTester:
         ############
 
         # Choose test smoothing parameter (0 for no smothing, 0.99 for big smoothing)
-        test_smooth = 0.95
-        test_radius_ratio = 0.7
+        test_smooth = 0 #0.95
+        test_radius_ratio = 1 #0.7
         softmax = torch.nn.Softmax(1)
 
         # Number of classes including ignored labels
@@ -458,7 +458,7 @@ class ModelTester:
             test_epoch += 1
 
             # Break when reaching number of desired votes
-            if last_min > num_votes:
+            if last_min > 0:
                 break
 
         return
