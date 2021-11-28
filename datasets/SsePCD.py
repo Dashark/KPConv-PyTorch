@@ -362,7 +362,7 @@ class SsePCDDataset(PointCloudDataset):
             batch_n += n
 
             # In case batch is full, stop
-            if batch_n > int(self.batch_limit):
+            if batch_n > 60000: # int(self.batch_limit):
                 break
 
             # Randomly drop some points (act as an augmentation process and a safety for GPU memory consumption)
@@ -626,7 +626,7 @@ class SsePCDDataset(PointCloudDataset):
                 write_ply(ply_cloud_file,
                           (cloud_points, cloud_colors, cloud_classes),
                           ['x', 'y', 'z', 'red', 'green', 'blue', 'class'])
-
+        self.cloud_names.append('output')
         self.all_splits = [i for i in range(len(self.cloud_names))]
         self.validation_split = [0] #[i for i in range(len(self.cloud_names)) if i % 10 == 0]
         print('Done in {:.1f}s'.format(time.time() - t0))
