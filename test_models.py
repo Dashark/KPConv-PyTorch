@@ -184,7 +184,7 @@ if __name__ == '__main__':
 
     # Data loader
     test_loader = DataLoader(test_dataset,
-                             batch_size=9,
+                             batch_size=1,
                              sampler=test_sampler,
                              collate_fn=collate_fn,
                              num_workers=config.input_threads,
