@@ -252,6 +252,7 @@ class ModelTester:
                 outputs = net(batch, config)
 
                 t += [time.time()]
+                print(1000*(t[1]-t[0]))
 
                 # Get probs and labels
                 stacked_probs = softmax(outputs).cpu().detach().numpy()
@@ -303,9 +304,11 @@ class ModelTester:
             new_min = torch.min(test_loader.dataset.min_potentials)
             print('Test epoch {:d}, end. Min potential = {:.1f}'.format(test_epoch, new_min))
             #print([np.mean(pots) for pots in test_loader.dataset.potentials])
+            print([torch.mean(pots) for pots in test_loader.dataset.potentials])
+            print([torch.max(pots) for pots in test_loader.dataset.potentials])
 
             # Save predicted cloud
-            if last_min + 1 < new_min:
+            if True: #last_min + 1 < new_min:
 
                 # Update last_min
                 last_min += 1
