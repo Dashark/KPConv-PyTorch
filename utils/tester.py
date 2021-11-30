@@ -461,7 +461,7 @@ class ModelTester:
             test_epoch += 1
 
             # Break when reaching number of desired votes
-            if last_min > 0:
+            if last_min > num_votes:
                 break
 
         return

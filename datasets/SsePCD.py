@@ -362,7 +362,7 @@ class SsePCDDataset(PointCloudDataset):
             batch_n += n
 
             # In case batch is full, stop
-            if batch_n > 60000: # int(self.batch_limit):
+            if batch_n > int(self.batch_limit):
                 break
 
             # Randomly drop some points (act as an augmentation process and a safety for GPU memory consumption)

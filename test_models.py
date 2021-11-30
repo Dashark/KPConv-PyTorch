@@ -146,7 +146,8 @@ if __name__ == '__main__':
     #config.augment_symmetries = False
     #config.batch_num = 3
     #config.in_radius = 4
-    config.validation_size = 200
+    #config.first_subsampling_dl = 0.01
+    config.validation_size = 1
     config.input_threads = 10
 
     ##############
@@ -221,7 +222,7 @@ if __name__ == '__main__':
     if config.dataset_task == 'classification':
         tester.classification_test(net, test_loader, config)
     elif config.dataset_task == 'cloud_segmentation':
-        tester.cloud_segmentation_test(net, test_loader, config, num_votes=1)
+        tester.cloud_segmentation_test(net, test_loader, config, num_votes=0)
     elif config.dataset_task == 'slam_segmentation':
         tester.slam_segmentation_test(net, test_loader, config)
     else:
