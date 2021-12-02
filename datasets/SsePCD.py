@@ -624,10 +624,8 @@ class SsePCDDataset(PointCloudDataset):
 
                 # Save as ply
                 write_ply(ply_cloud_file,
-                          (cloud_points, cloud_classes),
-                          ['x', 'y', 'z', 'class'])
-                          # (cloud_points, cloud_colors, cloud_classes),
-                          # ['x', 'y', 'z', 'red', 'green', 'blue', 'class'])
+                          (cloud_points, cloud_colors, cloud_classes),
+                          ['x', 'y', 'z', 'red', 'green', 'blue', 'class'])
         # self.cloud_names.append('output')
         self.all_splits = [i for i in range(len(self.cloud_names))]
         self.validation_split = [0] #[i for i in range(len(self.cloud_names)) if i % 10 == 0]
@@ -674,7 +672,7 @@ class SsePCDDataset(PointCloudDataset):
                 else:
                     # points_tmp = np.loadtxt(f, dtype=str, delimiter=' ')
                     point = []
-                    color = np.zeros((0, 3), dtype=np.uint8)
+                    color = [1,1,1]
                     label = None
                     elements = ln.split(' ')
                     for i, field in enumerate(pcd_header['FIELDS']):
