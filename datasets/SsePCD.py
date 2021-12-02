@@ -859,7 +859,7 @@ class SsePCDDataset(PointCloudDataset):
                 else:
                     data = read_ply(file_path)
                     points = np.vstack((data['x'], data['y'], data['z'])).T
-                    labels = data['class']
+                    labels = data['label']
 
                     # Compute projection inds
                     idxs = self.input_trees[i].query(points, return_distance=False)
