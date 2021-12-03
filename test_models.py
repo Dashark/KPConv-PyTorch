@@ -176,7 +176,7 @@ if __name__ == '__main__':
         test_dataset = SemanticKittiDataset(config, set=set, balance_classes=False)
         test_sampler = SemanticKittiSampler(test_dataset)
         collate_fn = SemanticKittiCollate
-    elif config.dataset == 'SsePCD':
+    elif config.dataset == 'Benewake':
         test_dataset = SsePCDDataset(config, set='test')
         test_sampler = SsePCDSampler(test_dataset)
         collate_fn = SsePCDCollate
